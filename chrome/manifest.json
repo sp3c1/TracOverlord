@@ -1,0 +1,31 @@
+{
+    "manifest_version": 2,
+    "name": "Flubit Trac Overlord!",
+    "description": "This extension acts as extension of TRAC wiki Kanban",
+    "version": "1.0",
+    "browser_action": {
+        "default_icon": "icon.png",
+        "default_popup": "popup.html",
+        "default_title": "WAAAGH!"
+    },
+    "permissions": [
+        "activeTab",
+        "http://10.0.1.222/trac/manage/*",
+        "https://10.0.1.222/trac/manage*",
+        "notifications"
+    ],
+    "web_accessible_resources": [
+        "icon.png"
+    ],
+    "content_scripts": [
+        {
+            "matches": [
+                "http://10.0.1.222/trac/manage/*",
+                "https://10.0.1.222/trac/manage*"
+            ],
+            "js": [
+                "context.js"
+            ]
+        }
+    ]
+}
