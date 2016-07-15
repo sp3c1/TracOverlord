@@ -17,6 +17,7 @@
     "web_accessible_resources": [
         "icon.png"
     ],
+    "options_page": "options.html",
     "content_scripts": [
         {
             "matches": [
@@ -24,6 +25,7 @@
                 "https://10.0.1.222/trac/manage*"
             ],
             "js": [
+                "jquery-3.1.0.min.js",
                 "context.js"
             ]
         }

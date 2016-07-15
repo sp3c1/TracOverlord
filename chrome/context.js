@@ -2,19 +2,197 @@
  * Created by Dev-Bart on 14/07/2016.
  */
 
-createNotification();
+try {
+    Notification.requestPermission().then(function (result) {
 
-function createNotification() {
-    var opt = {type: "basic", title: "Your Title", message: "Your message", iconUrl: "your_icon.png"}
-    chrome.notifications.create("notificationName", opt, function () {
-        alert(2);
+    });
+
+    function notifyMe(msg) {
+        // Let's check if the browser supports notifications
+        if (!("Notification" in window)) {
+            alert("This browser does not support system notifications");
+        }
+
+        // Let's check whether notification permissions have already been granted
+        else if (Notification.permission === "granted") {
+            // If it's okay let's create a notification
+            var notification = new Notification(msg);
+        }
+
+        // Otherwise, we need to ask the user for permission
+        else if (Notification.permission !== 'denied') {
+            Notification.requestPermission(function (permission) {
+                // If the user accepts, let's create a notification
+                if (permission === "granted") {
+                    var notification = new Notification(msg);
+                }
+            });
+        }
+
+        // Finally, if the user has denied notifications and you
+        // want to be respectful there is no need to bother them any more.
+    }
+
+} catch (e) {
+    console.log(e);
+    alert('OI, notify does not work. DO SOMETHING ABOUT IT FOR GOD`s SAKE');
+}
+
+mainloop();
+
+function mainloop() {
+
+    $.get('http://10.0.1.222:8080/login', function (content) {
+        var re = /(>log in<)/gi;
+        var bredCrumRe = /crumb\.init\("Jenkins-Crumb", "([A-Za-z0-9]*)"\)/gi;
+
+        var resultLogin = content.search(re);
+        if (resultLogin > -1) { // we need to log in
+            console.log('need to login');
+            var breadCrumb = bredCrumRe.exec(content);
+            if (breadCrumb) {
+                //auth
+                var breadCrumbExtracted = breadCrumb[1];
+
+                $.post('http://10.0.1.222:8080/j_acegi_security_check', {
+                    j_username: 'xxxx', //@TODO::config
+                    j_password: 'xxxx',
+                    'Jenkins-Crumb': breadCrumbExtracted
+                }, function (resultDashboard) {
+                    var succesCheck = resultDashboard.search(re);
+
+                    if (succesCheck === -1) {
+                        rullingThemAllLikeAnFreakingOverlord();
+                    } else {
+                        notifyMe('Splashhhh ... we did not validated with Jenkins :(');
+                    }
+                }).fail(function () {
+                    //retry
+                    console.log('Login retry')
+                    mainloop();
+                });
+            } else {
+                // HOLY SPAGHETTI AND MEATBALLS NO BREAD CRUMBS
+                notifyMe('Oh. No. Thats unexpected');
+            }
+        } else {
+            //RELEASE THE KRAKEN
+            rullingThemAllLikeAnFreakingOverlord();
+        }
+    });
+
+}
+
+var ticketRegex = /(#[0-9]+)/;
+
+function rullingThemAllLikeAnFreakingOverlord() {
+
+
+    universalModule("#WorkInProgress");
+    universalModule("#WaitingPullsReviews");
+    universalModule("#ClosedTickets");
+
+
+    //workInProgress(ticketRegex);
+}
+
+function universalLoop(appendIdOverlord, index, row, current, summaryPosition, componentPosition, ticketRegex) {
+
+    try {
+        var ticketValidation = ticketRegex.exec(current.find('td').get(0).innerHTML)
+    } catch (e) {
+        ticketValidation = false;
+    }
+
+    if (ticketValidation) { //row[0] inner html  = #ticket
+        var ticketId = ticketValidation[1];
+        var component = current.find('td').get(componentPosition).innerText;
+        var name = current.find('td').get(summaryPosition).innerText;
+
+        var status = localStorage.getItem(ticketId + 'status') || '---';
+        var statusUrl = localStorage.getItem(ticketId + 'url') || '';
+
+        //tmp overdi before redis gives us update
+        switch (status) {
+            case 'OK':
+                current.append('<td id="overlordId' + appendIdOverlord + '"><a href="' + statusUrl + '" target="_blank">OK</a></td>');
+                break;
+
+            case 'Fail':
+                current.append('<td id="overlordId' + appendIdOverlord + '"><a href="' + statusUrl + '" target="_blank">FAIL</a></td>');
+                break;
+
+            default:
+            case '---':
+                current.append('<td id="overlordId' + appendIdOverlord + '">---</td>');
+                break;
+        }
+
+        // %252F
+        //component = 'downloader';
+        //name = "feature%252Fproxy_module_lookup";
+
+        setTimeout(function () { // nextTick basically, call Deadpoll
+            $.getJSON('http://10.0.1.222:8080/job/Flubit/job/' + component + '/job/' + name.replace("\/", "%252F") + '/api/json'
+                , null, function (objResponse) {
+                    if (objResponse && objResponse.lastBuild) {
+                        try {
+                            if (objResponse.lastBuild.number == objResponse.lastStableBuild.number &&
+                                objResponse.lastBuild.number == objResponse.lastSuccessfulBuild.number) {
+                                localStorage.setItem(ticketId + 'status', 'OK');
+                                var newStatus = 'OK';
+                            } else {
+                                localStorage.setItem(ticketId + 'status', 'Fail');
+                                var newStatus = 'Fail';
+                            }
+
+                            localStorage.setItem(ticketId + 'url', objResponse.lastBuild.url);
+                            statusUrl = objResponse.lastBuild.url;
+
+                            var statusStr = (newStatus === status ? status : status + ' > ' + newStatus)
+                            $('#overlordId' + appendIdOverlord).html('<a href="' + statusUrl + '" target="_blank">' + statusStr + '</a>');
+
+                            if (status == 'OK' && status !== 'Fail') {
+                                notifyMe("[REGRESION]:" + component + " \n " + name);
+                            }
+
+                            status = newStatus
+                        } catch (e) {
+                            console.log(e);
+                            alert('CASE! CASE! EDGE CASE!');
+                        }
+                    } else {
+                        // Plenty O`nothin
+                    }
+                });
+        }, 1000);
+
+    }
+}
+
+function universalModule(moduleName) {
+    $(moduleName).parent().find("div>table>thead>tr").append('<th>CI status</th>');
+    $(moduleName).parent().find("div>table>tbody>.trac-columns").append('<th>CI status</th>');
+
+    //get component summary order
+    var summaryPosition = 1;
+    var componentPosition = 3;
+
+    $(moduleName).parent().find("div>table>thead>tr>th").each(function (index, row) {
+
+        if ($(this)[0].className === "summary") {
+            summaryPosition = index;
+        }
+        if ($(this)[0].className === "component") {
+            componentPosition = index;
+        }
+    })
+
+
+    var appendIdOverlord = 666;
+    $(moduleName).parent().find("div>table>tbody>tr").each(function (index, row) {
+        universalLoop(appendIdOverlord, index, row, $(this), summaryPosition, componentPosition, ticketRegex);
+        appendIdOverlord++;
     });
 }
 
-//include this line if you want to clear the notification after 5 seconds
-/*
- setTimeout(function () {
- chrome.notifications.clear("notificationName", function () {
- });
- }, 500);
- */
