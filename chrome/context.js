@@ -121,7 +121,7 @@ function universalLoop(appendIdOverlord, index, row, current, summaryPosition, c
         var component = current.find('td').get(componentPosition).innerText;
         var name = current.find('td').get(summaryPosition).innerText;
 
-        var status = localStorage.getItem(ticketId + 'status') || '---';
+        var status = localStorage.getItem(ticketId + 'status') || '--';
         var statusUrl = localStorage.getItem(ticketId + 'url') || '';
 
         //tmp overdi before redis gives us update
@@ -135,8 +135,8 @@ function universalLoop(appendIdOverlord, index, row, current, summaryPosition, c
                 break;
 
             default:
-            case '---':
-                current.append('<td id="overlordId' + appendIdOverlord + '">---</td>');
+            case '--':
+                current.append('<td id="overlordId' + appendIdOverlord + '">--</td>');
                 break;
         }
 
@@ -164,7 +164,7 @@ function universalLoop(appendIdOverlord, index, row, current, summaryPosition, c
                             var statusStr = (newStatus === status ? status : status + ' > ' + newStatus)
                             $('#overlordId' + appendIdOverlord).html('<a href="' + statusUrl + '" target="_blank">' + statusStr + '</a>');
 
-                            if (status == 'OK' && status !== 'Fail') {
+                            if (status == 'OK' && newStatus === 'Fail') {
                                 notifyMe("[REGRESION]:" + component + " \n " + name);
                             }
 
@@ -183,8 +183,8 @@ function universalLoop(appendIdOverlord, index, row, current, summaryPosition, c
 }
 
 function universalModule(moduleName) {
-    $(moduleName).parent().find("div>table>thead>tr").append('<th>CI status</th>');
-    $(moduleName).parent().find("div>table>tbody>.trac-columns").append('<th>CI status</th>');
+    $(moduleName).parent().find("div>table>thead>tr").append('<th>CI</th>');
+    $(moduleName).parent().find("div>table>tbody>.trac-columns").append('<th>CI</th>');
 
     $(moduleName).parent().find("div>table>tbody>tr>th[colspan]").each(function (index, row) {
         var colspan = $(this).attr('colspan');
