@@ -127,16 +127,16 @@ function universalLoop(appendIdOverlord, index, row, current, summaryPosition, c
         //tmp overdi before redis gives us update
         switch (status) {
             case 'OK':
-                current.append('<td id="overlordId' + appendIdOverlord + '"><a href="' + statusUrl + '" target="_blank">OK</a></td>');
+                current.append('<td id="overlordId' + ticketId + '"><a href="' + statusUrl + '" target="_blank">OK</a></td>');
                 break;
 
             case 'Fail':
-                current.append('<td id="overlordId' + appendIdOverlord + '"><a href="' + statusUrl + '" target="_blank">FAIL</a></td>');
+                current.append('<td id="overlordId' + ticketId + '"><a href="' + statusUrl + '" target="_blank">FAIL</a></td>');
                 break;
 
             default:
             case '--':
-                current.append('<td id="overlordId' + appendIdOverlord + '">--</td>');
+                current.append('<td id="overlordId' + ticketId + '">--</td>');
                 break;
         }
 
@@ -178,9 +178,9 @@ function universalLoop(appendIdOverlord, index, row, current, summaryPosition, c
 
                             var statusStr = (newStatus === status ? status : status + ' > ' + newStatus)
                             if (building) {
-                                $('#overlordId' + appendIdOverlord).html('<a href="' + statusUrl + '" target="_blank">Test</a>');
+                                $('#overlordId' + ticketId).html('<a href="' + statusUrl + '" target="_blank">Test</a>');
                             } else {
-                                $('#overlordId' + appendIdOverlord).html('<a href="' + statusUrl + '" target="_blank">' + statusStr + '</a>');
+                                $('#overlordId' + ticketId).html('<a href="' + statusUrl + '" target="_blank">' + statusStr + '</a>');
                             }
 
                             if (status == 'OK' && newStatus === 'Fail') {
@@ -200,7 +200,6 @@ function universalLoop(appendIdOverlord, index, row, current, summaryPosition, c
 
     }
 }
-
 
 function checkBuildInProgress(obj) {
     if (obj.lastBuild) {
@@ -236,6 +235,7 @@ function checkBuildInProgress(obj) {
     }
 }
 
+
 function universalModule(moduleName) {
     $(moduleName).parent().find("div>table>thead>tr").append('<th>CI</th>');
     $(moduleName).parent().find("div>table>tbody>.trac-columns").append('<th>CI</th>');
@@ -259,8 +259,8 @@ function universalModule(moduleName) {
         }
     })
 
-
     var appendIdOverlord = 666;
+
     $(moduleName).parent().find("div>table>tbody>tr").each(function (index, row) {
         universalLoop(appendIdOverlord, index, row, $(this), summaryPosition, componentPosition, ticketRegex);
         appendIdOverlord++;
