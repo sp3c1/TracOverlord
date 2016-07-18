@@ -149,20 +149,39 @@ function universalLoop(appendIdOverlord, index, row, current, summaryPosition, c
                 , null, function (objResponse) {
                     if (objResponse && objResponse.lastBuild) {
                         try {
-                            if (objResponse.lastBuild.number == objResponse.lastStableBuild.number &&
+                            var building = false;
+                            var newStatus = '--';
+
+                            if (objResponse.lastBuild && objResponse.lastStableBuild && objResponse.lastSuccessfulBuild &&
+                                objResponse.lastBuild.number == objResponse.lastStableBuild.number &&
                                 objResponse.lastBuild.number == objResponse.lastSuccessfulBuild.number) {
                                 localStorage.setItem(ticketId + 'status', 'OK');
-                                var newStatus = 'OK';
+                                newStatus = 'OK';
                             } else {
-                                localStorage.setItem(ticketId + 'status', 'Fail');
-                                var newStatus = 'Fail';
+
+                                if (checkBuildInProgress(objResponse)) {
+                                    //do nothing we simply the regression
+                                    //localStorage.setItem(ticketId + 'status', 'Building');
+                                    //var newStatus = 'Building';
+
+                                    newStatus = status;
+                                    building = 'true';
+                                } else {
+                                    localStorage.setItem(ticketId + 'status', 'Fail');
+                                    newStatus = 'Fail';
+                                }
+
                             }
 
                             localStorage.setItem(ticketId + 'url', objResponse.lastBuild.url);
                             statusUrl = objResponse.lastBuild.url;
 
                             var statusStr = (newStatus === status ? status : status + ' > ' + newStatus)
-                            $('#overlordId' + appendIdOverlord).html('<a href="' + statusUrl + '" target="_blank">' + statusStr + '</a>');
+                            if (building) {
+                                $('#overlordId' + appendIdOverlord).html('<a href="' + statusUrl + '" target="_blank">Test</a>');
+                            } else {
+                                $('#overlordId' + appendIdOverlord).html('<a href="' + statusUrl + '" target="_blank">' + statusStr + '</a>');
+                            }
 
                             if (status == 'OK' && newStatus === 'Fail') {
                                 notifyMe("[REGRESION]:" + component + " \n " + name);
@@ -179,6 +198,41 @@ function universalLoop(appendIdOverlord, index, row, current, summaryPosition, c
                 });
         }, 1000);
 
+    }
+}
+
+
+function checkBuildInProgress(obj) {
+    if (obj.lastBuild) {
+
+        if (obj.lastCompletedBuild && obj.lastCompletedBuild.number == obj.lastBuild.number) {
+            return false;
+        }
+
+        if (obj.lastFailedBuild && obj.lastFailedBuild.number == obj.lastBuild.number) {
+            return false;
+        }
+
+        if (obj.lastStableBuild && obj.lastStableBuild.number == obj.lastBuild.number) {
+            return false;
+        }
+
+        if (obj.lastSuccessfulBuild && obj.lastSuccessfulBuild.number == obj.lastBuild.number) {
+            return false;
+        }
+
+        if (obj.lastUnstableBuild && obj.lastUnstableBuild.number == obj.lastBuild.number) {
+            return false;
+        }
+
+        if (obj.lastUnsuccessfulBuild && obj.lastUnsuccessfulBuild.number == obj.lastBuild.number) {
+            return false;
+        }
+
+        return true;
+    } else {
+
+        return true; // nothing build yet
     }
 }
 
