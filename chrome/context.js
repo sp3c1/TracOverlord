@@ -96,8 +96,18 @@ function mainloop() {
 
 var ticketRegex = /(#[0-9]+)/;
 
+function cssEnhancment() {
+    console.log('enhancing css');
+    $("<style>")
+        .prop("type", "text/css")
+        .html("table.listing tr{font-size:10px;} .tickets tr.trac-columns th{font-size:10px;}")
+        .appendTo("head");
+}
+
 function rullingThemAllLikeAnFreakingOverlord() {
 
+
+    cssEnhancment();
 
     universalModule("#WorkInProgress");
     universalModule("#WaitingPullsReviews");
