@@ -58,11 +58,11 @@ function mainloop() {
                 var pass = null;
 
                 chrome.storage.sync.get({
-                    Overlord_User_Ldap: '',
-                    Overlord_Pass_Ldap: ''
+                    Overlord_User_Jenkins: '',
+                    Overlord_Pass_Jenkins: ''
                 }, function (items) {
-                    user = items.Overlord_User_Ldap;
-                    pass = items.Overlord_Pass_Ldap;
+                    user = items.Overlord_User_Jenkins;
+                    pass = items.Overlord_Pass_Jenkins;
 
                     $.post('http://10.0.1.222:8080/j_acegi_security_check', {
                         j_username: user, //@TODO::config

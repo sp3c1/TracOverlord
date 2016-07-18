@@ -2,10 +2,12 @@
 function save_options() {
     var user = document.getElementById('username').value;
     var pass = document.getElementById('pass').value;
+    var url = document.getElementById('url').value;
 
     chrome.storage.sync.set({
-        Overlord_User_Ldap: user,
-        Overlord_Pass_Ldap: pass
+        Overlord_User_Jenkins: user,
+        Overlord_Pass_Jenkins: pass,
+        Overlord_Url_Jenkins: url
     }, function () {
         //success
     });
@@ -17,11 +19,13 @@ function save_options() {
 function restore_options() {
     // Use default value color = 'red' and likesColor = true.
     chrome.storage.sync.get({
-        Overlord_User_Ldap: '',
-        Overlord_Pass_Ldap: ''
+        Overlord_User_Jenkins: '',
+        Overlord_Pass_Jenkins: '',
+        Overlord_Url_Jenkins: ''
     }, function (items) {
-        document.getElementById('username').value = items.Overlord_User_Ldap;
-        document.getElementById('pass').value = items.Overlord_Pass_Ldap;
+        document.getElementById('username').value = items.Overlord_User_Jenkins;
+        document.getElementById('pass').value = items.Overlord_Pass_Jenkins;
+        document.getElementById('url').value = items.Overlord_Url_Jenkins;
     });
 }
 
