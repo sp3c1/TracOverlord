@@ -12,7 +12,8 @@
         "activeTab",
         "http://10.0.1.222/trac/manage/*",
         "https://10.0.1.222/trac/manage*",
-        "notifications"
+        "notifications",
+        "storage"
     ],
     "web_accessible_resources": [
         "icon.png"

@@ -54,22 +54,33 @@ function mainloop() {
                 //auth
                 var breadCrumbExtracted = breadCrumb[1];
 
-                $.post('http://10.0.1.222:8080/j_acegi_security_check', {
-                    j_username: 'xxxx', //@TODO::config
-                    j_password: 'xxxx',
-                    'Jenkins-Crumb': breadCrumbExtracted
-                }, function (resultDashboard) {
-                    var succesCheck = resultDashboard.search(re);
+                var user = null;
+                var pass = null;
 
-                    if (succesCheck === -1) {
-                        rullingThemAllLikeAnFreakingOverlord();
-                    } else {
-                        notifyMe('Splashhhh ... we did not validated with Jenkins :(');
-                    }
-                }).fail(function () {
-                    //retry
-                    console.log('Login retry')
-                    mainloop();
+                chrome.storage.sync.get({
+                    Overlord_User_Ldap: '',
+                    Overlord_Pass_Ldap: ''
+                }, function (items) {
+                    user = items.Overlord_User_Ldap;
+                    pass = items.Overlord_Pass_Ldap;
+
+                    $.post('http://10.0.1.222:8080/j_acegi_security_check', {
+                        j_username: user, //@TODO::config
+                        j_password: pass,
+                        'Jenkins-Crumb': breadCrumbExtracted
+                    }, function (resultDashboard) {
+                        var succesCheck = resultDashboard.search(re);
+
+                        if (succesCheck === -1) {
+                            rullingThemAllLikeAnFreakingOverlord();
+                        } else {
+                            notifyMe('Splashhhh ... we did not validated with Jenkins :(');
+                        }
+                    }).fail(function () {
+                        //retry
+                        console.log('Login retry')
+                        mainloop();
+                    });
                 });
             } else {
                 // HOLY SPAGHETTI AND MEATBALLS NO BREAD CRUMBS
@@ -95,6 +106,7 @@ function rullingThemAllLikeAnFreakingOverlord() {
 
     //workInProgress(ticketRegex);
 }
+
 
 function universalLoop(appendIdOverlord, index, row, current, summaryPosition, componentPosition, ticketRegex) {
 
@@ -173,6 +185,11 @@ function universalLoop(appendIdOverlord, index, row, current, summaryPosition, c
 function universalModule(moduleName) {
     $(moduleName).parent().find("div>table>thead>tr").append('<th>CI status</th>');
     $(moduleName).parent().find("div>table>tbody>.trac-columns").append('<th>CI status</th>');
+
+    $(moduleName).parent().find("div>table>tbody>tr>th[colspan]").each(function (index, row) {
+        var colspan = $(this).attr('colspan');
+        $(this).attr('colspan', colspan * 1 + 1);
+    });
 
     //get component summary order
     var summaryPosition = 1;
