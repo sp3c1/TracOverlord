@@ -113,6 +113,10 @@ function rullingThemAllLikeAnFreakingOverlord() {
     universalModule("#WaitingPullsReviews");
     universalModule("#ClosedTickets");
 
+    universalModule("#Assigned");
+    universalModule("#AcceptedWorkinprogress");
+    universalModule("#YourWaitingPullReview");
+
 
     //workInProgress(ticketRegex);
 }
