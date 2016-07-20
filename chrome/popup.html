@@ -12,27 +12,30 @@
                 font-size: 100%;
             }
 
-            #status {
+            #projectstatus {
                 /* avoid an excessively wide status text */
                 white-space: pre;
                 text-overflow: ellipsis;
                 overflow: hidden;
-                max-width: 400px;
+                max-width: 900px;
+            }
+
+            .jenkins-entry {
+                width: 500px;
+            }
+
+            a {
+
             }
         </style>
+        <link rel="stylesheet" href="https://jenkins-contrib-themes.github.io/jenkins-material-theme/dist/material-teal.css" type="text/css">
 
-        <!--
-          - JavaScript and HTML must be in separate files: see our Content Security
-          - Policy documentation[1] for details and explanation.
-          -
-          - [1]: https://developer.chrome.com/extensions/contentSecurityPolicy
-         -->
+        <script src="jquery-3.1.0.min.js"></script>
         <script src="popup.js"></script>
+
     </head>
     <body>
-        Trac Overlord Is Working!
-        <div id="status"></div>
-        <img id="image-result" hidden>
+
     </body>
 </html>
 

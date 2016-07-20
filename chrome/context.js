@@ -109,6 +109,8 @@ function rullingThemAllLikeAnFreakingOverlord() {
 
     cssEnhancment();
 
+
+    //TODO:: put those into config
     universalModule("#WorkInProgress");
     universalModule("#WaitingPullsReviews");
     universalModule("#ClosedTickets");
