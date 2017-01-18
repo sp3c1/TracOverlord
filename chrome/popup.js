@@ -5,7 +5,7 @@
 
 $(document).ready(
     function () {
-        $.getJSON("http://10.0.1.222:8080/job/Flubit/api/json", function (data) {
+        $.getJSON("http://jenkins-internalservices.flubdev.info/job/Flubit/api/json", function (data) {
 
             var lookUp = {};
             for (var i = 0; i < data.jobs.length; i++) {
@@ -13,7 +13,7 @@ $(document).ready(
 
                 $('body').append('<h4>' + data.jobs[i].name + '<h3><div class="jenkins-entry" id="jenkins-' + data.jobs[i].name + '"></div>');
 
-                $("#jenkins-" + data.jobs[i].name).load("http://10.0.1.222:8080/job/Flubit/job/" + data.jobs[i].name + " #projectstatus", function (response) {
+                $("#jenkins-" + data.jobs[i].name).load("http://jenkins-internalservices.flubdev.info/job/Flubit/job/" + data.jobs[i].name + " #projectstatus", function (response) {
                     $(".healthReportDetails").remove();
                     $("#projectstatus>tbody>tr>td:nth-child(4)").remove();
                     $("#projectstatus>tbody>tr>td:nth-child(4)").remove();
@@ -41,7 +41,7 @@ $(document).ready(
 
                 });
                 /*
-                 $.getJSON("http://10.0.1.222:8080/job/Flubit/job/" + data.jobs[i].name + "/api/json", function (workData) {
+                 $.getJSON("http://jenkins-internalservices.flubdev.info/job/Flubit/job/" + data.jobs[i].name + "/api/json", function (workData) {
 
 
 
