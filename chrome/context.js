@@ -42,7 +42,7 @@ mainloop();
 
 function mainloop() {
 
-    $.get('http://10.0.1.222:8080/login', function (content) {
+    $.get('http://jenkins-internalservices.flubdev.info/login', function (content) {
         var re = /(>log in<)/gi;
         var bredCrumRe = /crumb\.init\("Jenkins-Crumb", "([A-Za-z0-9]*)"\)/gi;
 
@@ -64,7 +64,7 @@ function mainloop() {
                     user = items.Overlord_User_Jenkins;
                     pass = items.Overlord_Pass_Jenkins;
 
-                    $.post('http://10.0.1.222:8080/j_acegi_security_check', {
+                    $.post('http://jenkins-internalservices.flubdev.info/j_acegi_security_check', {
                         j_username: user, //@TODO::config
                         j_password: pass,
                         'Jenkins-Crumb': breadCrumbExtracted
@@ -161,7 +161,7 @@ function universalLoop(appendIdOverlord, index, row, current, summaryPosition, c
         //name = "feature%252Fproxy_module_lookup";
 
         setTimeout(function () { // nextTick basically, call Deadpoll
-            $.getJSON('http://10.0.1.222:8080/job/Flubit/job/' + component + '/job/' + name.replace("\/", "%252F") + '/api/json'
+            $.getJSON('http://jenkins-internalservices.flubdev.info/job/Flubit/job/' + component + '/job/' + name.replace("\/", "%252F") + '/api/json'
                 , null, function (objResponse) {
                     if (objResponse && objResponse.lastBuild) {
                         try {
